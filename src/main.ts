@@ -2,6 +2,8 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import '@purge-icons/generated';
 import { createI18n } from 'vue-i18n';
+import { createPinia } from 'pinia';
+import 'animate.css';
 
 import './styles/base.css';
 
@@ -26,5 +28,7 @@ const i18n = createI18n({
 app.use(i18n);
 
 app.use(Router);
+
+app.use(createPinia());
 
 app.mount('#app');

@@ -10,5 +10,11 @@ export default defineConfig({
       serif: ['Montserrat', 'ui-serif', 'Georgia'],
       mono: ['Fira Sans', 'ui-monospace', 'SFMono-Regular'],
     },
+    extend: {
+      colors: {
+        primary: '#202225',
+        secondary: '#5865f2',
+      },
+    },
   },
 });
