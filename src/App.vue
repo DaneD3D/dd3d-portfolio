@@ -22,8 +22,8 @@ export default defineComponent({
         shadow-2xl
       "
     />
-    <main class="ml-24">
-      <router-view />
+    <main class="ml-24 h-screen">
+      <router-view class="h-screen" />
     </main>
   </div>
 </template>

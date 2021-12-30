@@ -17,6 +17,10 @@ const routes = [
     path: '/test',
     component: () => import('/@/pages/TestPage.vue'),
   },
+  {
+    path: '/memory',
+    component: () => import('/@/pages/MemoryGamePage.vue'),
+  },
 ];
 
 export const Router = createRouter({
