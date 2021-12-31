@@ -10,7 +10,10 @@
   "dependencies": {
     "animate.css": "^4.1.1",
     "auth0": "^2.37.0",
+    "delay": "^5.0.0",
     "pinia": "^2.0.9",
+    "sleep": "^6.3.0",
+    "timers": "^0.1.1",
     "vue": "^3.2.21",
     "vue-i18n": "^9.2.0-beta.18",
     "vue-router": "^4.0.11"

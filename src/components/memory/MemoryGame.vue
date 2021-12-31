@@ -32,6 +32,7 @@ let shuffledCards = shuffleSort(cardArray);
 
 let correctCards: Card[] = [];
 let cardsSelected: Card[] = [];
+let transitionCards: Card[] = [];
 let score = ref(0);
 let clicks = ref(0);
 
@@ -54,22 +55,54 @@ function shuffleSort(deck: any) {
   return deck;
 }
 
-function compareTwo(cardsToCompare: Card[]) {
+function compareNames(cardsToCompare: Card[]) {
   return cardsToCompare[0].name == cardsToCompare[1].name;
+}
+
+function compareIds(cardsToCompare: Card[]) {
+  return cardsToCompare[0].id == cardsToCompare[1].id;
+}
+
+function clearSelection() {
+  cardsSelected.length = 0;
+}
+
+function clearTransition() {
+  transitionCards.length = 0;
+}
+
+function myTransTimeout() {
+  setTimeout(clearTransition, 50);
+}
+
+function replay() {
+  shuffleSort(cardArray);
 }
 
 function selectCard(card: Card) {
   clicks.value++;
   cardsSelected.push(card);
-  if (cardsSelected.length == 2 && compareTwo(cardsSelected)) {
-    if (compareTwo(cardsSelected)) {
-      correctCards = correctCards.concat(cardsSelected);
-      cardsSelected = [];
+  if (cardsSelected.length >= 2) {
+    if (compareNames(cardsSelected) && !compareIds(cardsSelected)) {
+      correctCards.push.apply(correctCards, cardsSelected);
+      clearSelection();
       score.value++;
-    } else {
-      cardsSelected = [];
-    }
+    } else transitionCards.push.apply(transitionCards, cardsSelected);
+    myTransTimeout();
+    clearSelection();
   }
+}
+
+function findFlipped(card: Card) {
+  let masterList = correctCards.concat(cardsSelected, transitionCards);
+  return (
+    undefined ==
+    masterList.find(function (selected) {
+      if (selected.id == card.id) {
+        return true;
+      }
+    })
+  );
 }
 </script>
 
@@ -83,6 +116,7 @@ function selectCard(card: Card) {
       Clicks:
       <span id="clickBoard">{{ clicks }}</span>
     </div>
+    <div><button :click="replay">Replay</button></div>
 
     <div
       id="grid"
@@ -96,13 +130,7 @@ function selectCard(card: Card) {
       "
     >
       <div
-        class="
-          flip-card
-          bg-transparent
-          w-full
-          h-full
-          border-1 border-solid border-red-700
-        "
+        class="flip-card bg-transparent w-full h-full"
         v-for="card in shuffledCards"
         v-bind:id="card.id"
         v-on:click.prevent="selectCard(card)"
@@ -115,45 +143,26 @@ function selectCard(card: Card) {
             transition-transform
             duration-[0.8s]
             preserve-3d
+            rgb
           "
+          :class="{ flipped: findFlipped(card) }"
         >
-          <div class="absolute backface-hidden z-0 w-full h-full">
+          <div class="absolute z-0 w-full h-full">
             <img
               src="\src\assets\memory\cardBack.jpg"
               alt="cardBack"
-              class="backface-hidden h-full w-full"
+              class="backface-hidden h-full w-full rounded-lg"
             />
           </div>
-          <div class="absolute z-1 w-full h-full backface-hidden transform">
-            <!--readd rotate-y-180 to ^ class-->
+          <div class="absolute z-0 w-full h-full backface-hidden transform">
             <component
-              class="w-full h-full rounded-lg bg-light-50 bg-green-200"
+              class="w-full h-full rounded-lg bg-gray-500 dark:bg-secondary"
               v-bind:is="card.img"
             />
           </div>
         </div>
       </div>
     </div>
-    <!--
-      <div
-        id="popup"
-        class="
-          bg-red-500
-          w-[200px]
-          h-[200px]
-          z-20
-          fixed
-          top-[100px]
-          left-[100px]
-          flex
-          justify-center
-          items-center
-          flex-col
-        "
-      >
-        <button id="playAgain">Play Again</button>
-      </div>
-      -->
   </div>
 </template>
 
@@ -163,4 +172,41 @@ function selectCard(card: Card) {
   transform: rotateY(180deg);
 }
 */
+
+.flip-card:hover .rgb::before {
+  content: '';
+  background: linear-gradient(
+      45deg,
+      #ff0000 0%,
+      #ff9a00 10%,
+      #d0de21 20%,
+      #4fdc4a 30%,
+      #3fdad8 40%,
+      #2fc9e2 50%,
+      #1c7fee 60%,
+      #5f15f2 70%,
+      #ba0cf8 80%,
+      #fb07d9 90%,
+      #ff0000 100%
+    )
+    repeat 0% 0% / 300% 100%;
+  position: absolute;
+  inset: -3px;
+  border-radius: 16px;
+  filter: blur(8px);
+  transform: translateZ(-1px); /*or z-index */
+  animation: rgb 6s linear infinite;
+}
+
+@keyframes rgb {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 </style>
